@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function Navbar() {
   const handleopenform = () => {
     document.getElementById("add_data").showModal();
@@ -23,42 +25,53 @@ export default function Navbar() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formData);
-    // Check if the Invoice Number is a positive integer
-    if (!/^\d+$/.test(formData.invoiceNumber)) {
-      setErrorMessage("Invoice Number must be a positive integer.");
-      return;
-    }
-
-    // Send a GET request to check if the Invoice Number exists for the same financial year
-    axios
-      .get("http://localhost:5000/api/invoices", {
-        params: {
-          invoiceNumber: formData.invoiceNumber,
-          financialYear: getFinancialYear(formData.invoiceDate),
-        },
-      })
-      .then((response) => {
-        if (response.data.length > 0) {
-          setErrorMessage(
-            "Invoice number already exists for this financial year."
-          );
-        } else {
-          setErrorMessage(""); // Clear any previous error message
-          // Send a POST request to create the new invoice
-          axios
-            .post("http://localhost:5000/api/invoices", formData)
-            .then((response) => {
-              console.log("POST Request Response:", response.data);
-            })
-            .catch((error) => {
-              console.error("Error making POST request:", error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.error("Error checking Invoice Number:", error);
+    // console.log(formData);
+    if (
+      formData.invoiceAmount == "" ||
+      formData.invoiceDate == "" ||
+      formData.invoiceNumber == ""
+    ) {
+      toast.error(`Please Fill All The Boxes`, {
+        position: toast.POSITION.TOP_CENTER,
       });
+    } else {
+      if (!/^\d+$/.test(formData.invoiceNumber)) {
+        setErrorMessage("Invoice Number must be a positive integer.");
+        return;
+      }
+
+      // Send a GET request to check if the Invoice Number exists for the same financial year
+      axios
+        .get("http://localhost:5000/api/invoices", {
+          params: {
+            invoiceNumber: formData.invoiceNumber,
+            financialYear: getFinancialYear(formData.invoiceDate),
+          },
+        })
+        .then((response) => {
+          if (response.data.length > 0) {
+            setErrorMessage(
+              "Invoice number already exists for this financial year."
+            );
+          } else {
+            setErrorMessage("");
+            axios
+              .post("http://localhost:5000/api/invoices", formData)
+              .then((response) => {
+                console.log("POST Request Response:", response.data);
+                toast.success(`Invioce Added Successfully`, {
+                  position: toast.POSITION.TOP_CENTER,
+                });
+              })
+              .catch((error) => {
+                console.error("Error making POST request:", error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error("Error checking Invoice Number:", error);
+        });
+    }
   };
 
   // Helper function to get the financial year
@@ -70,6 +83,7 @@ export default function Navbar() {
 
   return (
     <div>
+      <ToastContainer />
       <nav className="shadow-md p-2 flex justify-between items-center">
         <a
           href="#"

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Loading from "./Loding";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,9 @@ export default function Dashboard() {
         // alert(`Invoice with ID ${id} has been deleted.`);
         const updatedData = data.filter((item) => item._id !== id);
         setData(updatedData);
+        toast.error(`Invioce Deleted Successfully`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       })
       .catch((error) => {
         alert(`Error deleting invoice with ID ${id}: ${error.message}`);
@@ -52,6 +57,7 @@ export default function Dashboard() {
   };
   return (
     <div>
+      <ToastContainer />
       <div className="flex justify-center items-center h-16 ">
         <div className="relative">
           <input
