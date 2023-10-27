@@ -6,6 +6,47 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    invoiceDate: "",
+    invoiceNumber: "",
+    invoiceAmount: "",
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const handleEdit = () => {
+    document.getElementById("Edit_Btn").showModal();
+  };
+  const handleSubmit = (e, id) => {
+    e.preventDefault();
+    if (
+      formData.invoiceAmount == "" ||
+      formData.invoiceDate == "" ||
+      formData.invoiceNumber == ""
+    ) {
+      toast.error(`Please Fill All The Boxes`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    } else {
+      console.log(formData);
+      axios
+        .put(`http://localhost:5000/api/invoices/${id}`, formData)
+        .then((response) => {
+          console.log(response);
+          toast.success(`Edit Successfully`, {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
   //Get
   useEffect(() => {
     setLoading(true);
@@ -52,9 +93,7 @@ export default function Dashboard() {
     );
     setData(filtered);
   };
-  const handleRefresh = () => {
-    window.location.reload(); // Reloads the current page
-  };
+
   return (
     <div>
       <ToastContainer />
@@ -66,11 +105,7 @@ export default function Dashboard() {
             placeholder="Search.... Invoice Number.... Amount....	Financial Year...."
             className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none w-[420px] border"
           />
-          <button
-            onClick={handleRefresh}
-            type="submit"
-            className="absolute right-0 top-0 mt-3 mr-4"
-          >
+          <button type="submit" className="absolute right-0 top-0 mt-3 mr-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-gray-500 cursor-pointer"
@@ -114,7 +149,13 @@ export default function Dashboard() {
                   <td className="py-3 px-6 text-center">{ele.financialYear}</td>
                   <td className="py-3 px-6 text-center">
                     <div className="flex items-center justify-center">
-                      <button className="bg-blue-500 text-white hover:bg-blue-700 py-1 px-3 rounded-lg mr-2">
+                      <button
+                        onClick={() => {
+                          handleEdit(ele._id);
+                          handleSubmit(ele._id);
+                        }}
+                        className="bg-blue-500 text-white hover:bg-blue-700 py-1 px-3 rounded-lg mr-2"
+                      >
                         Edit
                       </button>
                       <button
@@ -131,6 +172,76 @@ export default function Dashboard() {
           </table>
         </div>
       )}
+
+      <dialog id="Edit_Btn" className="rounded-[20px] p-2">
+        <form method="dialog">
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            ✕
+          </button>
+          <form className="w-[400px]  p-2 rounded-[20px]">
+            <div className="mb-4">
+              <label
+                htmlFor="invoiceDate"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Invoice Date:
+              </label>
+              <input
+                type="date"
+                id="invoiceDate"
+                name="invoiceDate"
+                value={formData.invoiceDate}
+                onChange={handleInputChange}
+                placeholder="InvoiceDate"
+                className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                htmlFor="invoiceNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Invoice Number:
+              </label>
+              <input
+                type="number"
+                id="invoiceNumber"
+                name="invoiceNumber"
+                value={formData.invoiceNumber}
+                onChange={handleInputChange}
+                placeholder="InvoiceNumber"
+                className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                htmlFor="invoiceAmount"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Invoice Amount:
+              </label>
+              <input
+                type="number"
+                id="invoiceAmount"
+                name="invoiceAmount"
+                value={formData.invoiceAmount}
+                onChange={handleInputChange}
+                placeholder="InvoiceAmount"
+                className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              className="py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
+            >
+              Submit
+            </button>
+          </form>
+        </form>
+      </dialog>
     </div>
   );
 }

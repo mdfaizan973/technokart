@@ -91,15 +91,23 @@ export default function Navbar() {
         >
           TECHNOKART
         </a>
-        {errorMessage && (
-          <p className="text-red-500">{errorMessage}</p> // Display error message in red
-        )}
-        <button
-          onClick={handleopenform}
-          className="bg-blue-400 text-black-500 rounded-md py-2 px-4 hover:bg-blue-100 transition border duration-300"
-        >
-          Add Invoice
-        </button>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        <div>
+          <button
+            onClick={handleopenform}
+            className="bg-blue-400 text-black-500 rounded-md py-2 px-4 hover:bg-blue-100 transition border duration-300"
+          >
+            Add Invoice
+          </button>
+          <button
+            onClick={() => {
+              window.location.reload();
+            }}
+            className="bg-gray-400 text-black-500 rounded-md py-2 px-4 hover:bg-gray-100 transition border duration-300"
+          >
+            Refresh
+          </button>
+        </div>
       </nav>
 
       <dialog id="add_data" className="rounded-[20px] p-2">
