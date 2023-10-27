@@ -103,11 +103,11 @@ app.get("/api/invoices", async (req, res) => {
 });
 
 // 2. Update a specific invoice based on invoice number
-app.put("/api/invoices/:invoiceNumber", async (req, res) => {
-  const { invoiceNumber } = req.params;
+app.put("/api/invoices/:id", async (req, res) => {
+  const { id } = req.params;
   const updatedInvoice = req.body;
   // You can add validation logic here if needed
-  await Invoice.findOneAndUpdate({ invoiceNumber }, updatedInvoice);
+  await Invoice.findOneAndUpdate({ id }, updatedInvoice);
   res.json(updatedInvoice);
 });
 
