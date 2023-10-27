@@ -21,7 +21,7 @@ const InvoiceSchema = new mongoose.Schema({
   invoiceDate: String,
   invoiceNumber: Number,
   invoiceAmount: Number,
-  financialYear: String, // Add a field for financial year
+  financialYear: String,
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
@@ -88,6 +88,42 @@ function getFinancialYear(invoiceDate) {
   const year = date.getFullYear();
   return `${year}-${year + 1}`;
 }
+
+// 4. Get all invoices stored in the db
+app.get("/api/invoices", async (req, res) => {
+  const { invoiceNumber } = req.query;
+
+  if (invoiceNumber) {
+    const invoices = await Invoice.find({ invoiceNumber });
+    res.json(invoices);
+  } else {
+    const invoices = await Invoice.find({});
+    res.json(invoices);
+  }
+});
+
+// 2. Update a specific invoice based on invoice number
+app.put("/api/invoices/:invoiceNumber", async (req, res) => {
+  const { invoiceNumber } = req.params;
+  const updatedInvoice = req.body;
+  // You can add validation logic here if needed
+  await Invoice.findOneAndUpdate({ invoiceNumber }, updatedInvoice);
+  res.json(updatedInvoice);
+});
+
+// 3. Delete a specific invoice based on invoice number
+app.delete("/api/invoices/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedInvoice = await Invoice.findByIdAndDelete(id);
+    if (!deletedInvoice) {
+      return res.status(404).json({ message: "Invoice not found" });
+    }
+    res.status(200).json({ message: "Invoice deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete invoice", error: error });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
