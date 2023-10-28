@@ -42,7 +42,7 @@ export default function Navbar() {
 
       // Send a GET request to check if the Invoice Number exists for the same financial year
       axios
-        .get("http://localhost:5000/api/invoices", {
+        .get("https://techkartmanagement.onrender.com/invioces", {
           params: {
             invoiceNumber: formData.invoiceNumber,
             financialYear: getFinancialYear(formData.invoiceDate),
@@ -56,7 +56,10 @@ export default function Navbar() {
           } else {
             setErrorMessage("");
             axios
-              .post("http://localhost:5000/api/invoices", formData)
+              .post(
+                "https://techkartmanagement.onrender.com/invioces",
+                formData
+              )
               .then((response) => {
                 console.log("POST Request Response:", response.data);
                 toast.success(`Invioce Added Successfully`, {
@@ -89,7 +92,7 @@ export default function Navbar() {
           href="#"
           className="flex items-center text-black text-xl font-semibold border-[3px] border-gray-400 p-2 rounded-md"
         >
-          TECHNOKART
+          TECHNO-KART
         </a>
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         <div>

@@ -35,7 +35,7 @@ export default function Dashboard() {
     } else {
       console.log(formData);
       axios
-        .put(`http://localhost:5000/api/invoices/${id}`, formData)
+        .put(`https://techkartmanagement.onrender.com/invioces/${id}`, formData)
         .then((response) => {
           console.log(response);
           toast.success(`Edit Successfully`, {
@@ -51,7 +51,7 @@ export default function Dashboard() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://localhost:5000/api/invoices")
+      .get("https://techkartmanagement.onrender.com/invioces")
       .then((response) => {
         // console.log("Invoice Data:", response.data);
         setData(response.data);
@@ -65,18 +65,18 @@ export default function Dashboard() {
   // Delete
   const handledelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/invoices/${id}`)
+      .delete(`https://techkartmanagement.onrender.com/invioces/${id}`)
       .then((res) => {
         console.log(res);
         // alert(`Invoice with ID ${id} has been deleted.`);
-        const updatedData = data.filter((item) => item._id !== id);
+        const updatedData = data.filter((item) => item.id !== id);
         setData(updatedData);
         toast.error(`Invioce Deleted Successfully`, {
           position: toast.POSITION.TOP_CENTER,
         });
       })
       .catch((error) => {
-        alert(`Error deleting invoice with ID ${id}: ${error.message}`);
+        alert(`Error deleting invoice with ID ${id}: ${error} `);
       });
   };
 
@@ -151,15 +151,15 @@ export default function Dashboard() {
                     <div className="flex items-center justify-center">
                       <button
                         onClick={() => {
-                          handleEdit(ele._id);
-                          handleSubmit(ele._id);
+                          handleEdit(ele.id);
+                          handleSubmit(ele.id);
                         }}
                         className="bg-blue-500 text-white hover:bg-blue-700 py-1 px-3 rounded-lg mr-2"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handledelete(ele._id)}
+                        onClick={() => handledelete(ele.id)}
                         className="bg-red-500 text-white hover:bg-red-700 py-1 px-3 rounded-lg"
                       >
                         Delete
