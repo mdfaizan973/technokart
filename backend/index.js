@@ -9,13 +9,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB using Mongoose
-mongoose.connect(
-  "mongodb+srv://faizanmd:faizan123@cluster0.defifv6.mongodb.net/invodatabase?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+mongoUrl =
+  "mongodb+srv://faizanmd:faizan123@cluster0.defifv6.mongodb.net/invodatabase?retryWrites=true&w=majority";
+mongoose.connect(mongoUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const InvoiceSchema = new mongoose.Schema({
   invoiceDate: String,
