@@ -7,34 +7,7 @@ export default function Dashboard() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [someId, setSomeId] = useState("");
-  // const [getEditD, setGetEditD] = useState({});
-  // const handleEdit = (id) => {
-  //   document.getElementById("Edit_Btn").showModal();
-  //   axios
-  //     .get(`https://techkartmanagement.onrender.com/invioces/${id}`)
-  //     .then((response) => {
-  //       // console.log("Invoice Edit Data:", response.data);
-  //       setGetEditD(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching invoices:", error);
-  //     });
-  // };
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log(getEditD);
-  //   // axios
-  //   //   .put(`https://techkartmanagement.onrender.com/invioces`, getEditD)
-  //   //   .then((res) => {
-  //   //     console.log(res);
-  //   //     toast.success(`Edit Successfully`, {
-  //   //       position: toast.POSITION.TOP_CENTER,
-  //   //     });
-  //   //   })
-  //   //   .catch((err) => {
-  //   //     console.log(err);
-  //   //   });
-  // };
+
   // ----
   const [getEditD, setGetEditD] = useState({
     invoiceDate: "",
@@ -65,22 +38,11 @@ export default function Dashboard() {
 
     console.log(updatedData, someId);
 
-    // axios
-    //   .put(`https://techkartmanagement.onrender.com/invioces`, getEditD)
-    //   .then((res) => {
-    //     console.log(res);
-    //     toast.success(`Edit Successfully`, {
-    //       position: toast.POSITION.TOP_CENTER,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
     axios
       .put(
         `https://techkartmanagement.onrender.com/invioces/${someId}`,
         updatedData
-      ) // Replace someId with the actual ID
+      )
       .then((res) => {
         console.log(res);
         toast.success("Edit Successfully", {
