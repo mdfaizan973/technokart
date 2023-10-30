@@ -6,46 +6,90 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [someId, setSomeId] = useState("");
+  // const [getEditD, setGetEditD] = useState({});
+  // const handleEdit = (id) => {
+  //   document.getElementById("Edit_Btn").showModal();
+  //   axios
+  //     .get(`https://techkartmanagement.onrender.com/invioces/${id}`)
+  //     .then((response) => {
+  //       // console.log("Invoice Edit Data:", response.data);
+  //       setGetEditD(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching invoices:", error);
+  //     });
+  // };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log(getEditD);
+  //   // axios
+  //   //   .put(`https://techkartmanagement.onrender.com/invioces`, getEditD)
+  //   //   .then((res) => {
+  //   //     console.log(res);
+  //   //     toast.success(`Edit Successfully`, {
+  //   //       position: toast.POSITION.TOP_CENTER,
+  //   //     });
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     console.log(err);
+  //   //   });
+  // };
+  // ----
+  const [getEditD, setGetEditD] = useState({
     invoiceDate: "",
     invoiceNumber: "",
     invoiceAmount: "",
   });
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-  const handleEdit = () => {
+  const handleEdit = (id) => {
     document.getElementById("Edit_Btn").showModal();
-  };
-  const handleSubmit = (e, id) => {
-    e.preventDefault();
-    if (
-      formData.invoiceAmount == "" ||
-      formData.invoiceDate == "" ||
-      formData.invoiceNumber == ""
-    ) {
-      toast.error(`Please Fill All The Boxes`, {
-        position: toast.POSITION.TOP_CENTER,
+    axios
+      .get(`https://techkartmanagement.onrender.com/invioces/${id}`)
+      .then((response) => {
+        setGetEditD(response.data);
+        setSomeId(response.data.id);
+      })
+      .catch((error) => {
+        console.error("Error fetching invoices:", error);
       });
-    } else {
-      console.log(formData);
-      axios
-        .put(`https://techkartmanagement.onrender.com/invioces/${id}`, formData)
-        .then((response) => {
-          console.log(response);
-          toast.success(`Edit Successfully`, {
-            position: toast.POSITION.TOP_CENTER,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const updatedData = {
+      invoiceDate: getEditD.invoiceDate,
+      invoiceNumber: getEditD.invoiceNumber,
+      invoiceAmount: getEditD.invoiceAmount,
+    };
+
+    console.log(updatedData, someId);
+
+    // axios
+    //   .put(`https://techkartmanagement.onrender.com/invioces`, getEditD)
+    //   .then((res) => {
+    //     console.log(res);
+    //     toast.success(`Edit Successfully`, {
+    //       position: toast.POSITION.TOP_CENTER,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    axios
+      .put(
+        `https://techkartmanagement.onrender.com/invioces/${someId}`,
+        updatedData
+      ) // Replace someId with the actual ID
+      .then((res) => {
+        console.log(res);
+        toast.success("Edit Successfully", {
+          position: toast.POSITION.TOP_CENTER,
         });
-    }
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+      });
   };
   //Get
   useEffect(() => {
@@ -83,7 +127,6 @@ export default function Dashboard() {
   // search
   const handleFilter = (keyword) => {
     // Filter the data based on a keyword search
-
     const filtered = data.filter(
       (item) =>
         item.invoiceNumber.toString().includes(keyword) ||
@@ -152,7 +195,6 @@ export default function Dashboard() {
                       <button
                         onClick={() => {
                           handleEdit(ele.id);
-                          handleSubmit(ele.id);
                         }}
                         className="bg-blue-500 text-white hover:bg-blue-700 py-1 px-3 rounded-lg mr-2"
                       >
@@ -175,71 +217,79 @@ export default function Dashboard() {
 
       <dialog id="Edit_Btn" className="rounded-[20px] p-2">
         <form method="dialog">
+          {" "}
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
-          <form className="w-[400px]  p-2 rounded-[20px]">
-            <div className="mb-4">
-              <label
-                htmlFor="invoiceDate"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Invoice Date:
-              </label>
-              <input
-                type="date"
-                id="invoiceDate"
-                name="invoiceDate"
-                value={formData.invoiceDate}
-                onChange={handleInputChange}
-                placeholder="InvoiceDate"
-                className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
+        </form>
 
-            <div className="mb-4">
-              <label
-                htmlFor="invoiceNumber"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Invoice Number:
-              </label>
-              <input
-                type="number"
-                id="invoiceNumber"
-                name="invoiceNumber"
-                value={formData.invoiceNumber}
-                onChange={handleInputChange}
-                placeholder="InvoiceNumber"
-                className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="invoiceAmount"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Invoice Amount:
-              </label>
-              <input
-                type="number"
-                id="invoiceAmount"
-                name="invoiceAmount"
-                value={formData.invoiceAmount}
-                onChange={handleInputChange}
-                placeholder="InvoiceAmount"
-                className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-
-            <button
-              onClick={handleSubmit}
-              className="py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
+        <form className="w-[400px] p-2 rounded-[20px]" onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="invoiceDate"
+              className="block text-sm font-medium text-gray-700"
             >
-              Submit
-            </button>
-          </form>
+              Invoice Date:
+            </label>
+            <input
+              type="date"
+              id="invoiceDate"
+              name="invoiceDate"
+              value={getEditD.invoiceDate}
+              onChange={(e) =>
+                setGetEditD({ ...getEditD, invoiceDate: e.target.value })
+              }
+              placeholder="InvoiceDate"
+              className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="invoiceNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Invoice Number:
+            </label>
+            <input
+              type="number"
+              id="invoiceNumber"
+              name="invoiceNumber"
+              value={getEditD.invoiceNumber}
+              onChange={(e) =>
+                setGetEditD({ ...getEditD, invoiceNumber: e.target.value })
+              }
+              placeholder="InvoiceNumber"
+              className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="invoiceAmount"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Invoice Amount:
+            </label>
+            <input
+              type="number"
+              id="invoiceAmount"
+              name="invoiceAmount"
+              value={getEditD.invoiceAmount}
+              onChange={(e) =>
+                setGetEditD({ ...getEditD, invoiceAmount: e.target.value })
+              }
+              placeholder="InvoiceAmount"
+              className="py-3 px-4 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
+          >
+            Submit
+          </button>
         </form>
       </dialog>
     </div>
